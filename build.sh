@@ -1,5 +1,5 @@
 #!/bin/bash
-build=/home/piasek/android/Piasek-G2
+build=/home/piasek/android/LG_G2
 kernel="Piasek-KK"
 version="0.4"
 rom="LG"
@@ -29,7 +29,7 @@ echo "                  \/     \/     \/    \/ "
 echo "D802 Variant"
 
 		variant="d802"
-		config="d802_defconfig"
+		config="d802_piasek_defconfig"
 		ramdisk=ramdisk/d802.lz4
 		
 # Begin commands
