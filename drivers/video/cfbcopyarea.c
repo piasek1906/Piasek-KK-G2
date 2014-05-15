@@ -235,7 +235,6 @@ bitcpy_rev(struct fb_info *p, unsigned long __iomem *dst, unsigned dst_idx,
 
 	first = ~fb_shifted_pixels_mask_long(p, (dst_idx + 1) % bits, bswapmask);
 	last = fb_shifted_pixels_mask_long(p, (bits + dst_idx + 1 - n) % bits, bswapmask);
-					    bswapmask);
 
 	if (!shift) {
 		// Same alignment for source and dest
