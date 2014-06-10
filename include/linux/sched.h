@@ -141,6 +141,7 @@ extern int nr_processes(void);
 extern unsigned long nr_running(void);
 extern unsigned long nr_uninterruptible(void);
 extern unsigned long nr_iowait(void);
+extern unsigned long avg_nr_running(void);
 extern unsigned long nr_iowait_cpu(int cpu);
 extern unsigned long this_cpu_load(void);
 
@@ -1001,6 +1002,10 @@ struct sched_domain {
 
 	u64 last_update;
 
+	/* idle_balance() stats */
+	u64 max_newidle_lb_cost;
+	unsigned long next_decay_max_lb_cost;
+
 #ifdef CONFIG_SCHEDSTATS
 	/* load_balance() stats */
 	unsigned int lb_count[CPU_MAX_IDLE_TYPES];
@@ -1214,7 +1219,38 @@ struct sched_statistics {
 };
 #endif
 
+#define RAVG_HIST_SIZE  5
+
+/* ravg represents frequency scaled cpu-demand of tasks */
+struct ravg {
+	/*
+	 * 'window_start' marks the beginning of new window
+	 *
+	 * 'mark_start' marks the beginning of an event (task waking up, task
+	 * starting to execute, task being preempted) within a window
+	 *
+	 * 'sum' represents how runnable a task has been within current
+	 * window. It incorporates both running time and wait time and is
+	 * frequency scaled.
+	 *
+	 * 'sum_history' keeps track of history of 'sum' seen over previous
+	 * RAVG_HIST_SIZE windows. Windows where task was entirely sleeping are
+	 * ignored.
+	 *
+	 * 'demand' represents maximum sum seen over previous RAVG_HIST_SIZE
+	 * windows. 'demand' could drive frequency demand for tasks.
+	 */
+	u64 window_start, mark_start;
+	u32 sum, demand;
+	u32 sum_history[RAVG_HIST_SIZE];
+};
+
 struct sched_entity {
+	/*
+	 * Todo : Move ravg to 'struct task_struct', as this is common for both
+	 * real-time and non-realtime tasks
+	 */
+	struct ravg		ravg;
 	struct load_weight	load;		/* for load-balancing */
 	struct rb_node		run_node;
 	struct list_head	group_node;
@@ -1282,6 +1318,9 @@ struct task_struct {
 #ifdef CONFIG_SMP
 	struct llist_node wake_entry;
 	int on_cpu;
+	struct task_struct *last_wakee;
+	unsigned long wakee_flips;
+	unsigned long wakee_flip_decay_ts;
 #endif
 	int on_rq;
 
@@ -2066,6 +2105,7 @@ extern unsigned int sysctl_sched_min_granularity;
 extern unsigned int sysctl_sched_wakeup_granularity;
 extern unsigned int sysctl_sched_child_runs_first;
 extern unsigned int sysctl_sched_wake_to_idle;
+extern unsigned int sysctl_sched_ravg_window;
 
 enum sched_tunable_scaling {
 	SCHED_TUNABLESCALING_NONE,
