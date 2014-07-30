@@ -2,8 +2,9 @@
 
 # Kernel Tuning by Piasek1906.
 
-# mpdecision hotplug on
-start mpdecision
+# hotplug
+stop mpdecision
+start intelli_plug
 
 # enable force fast charge on USB to charge faster
 echo "1" > /sys/kernel/fast_charge/force_fast_charge;
@@ -99,7 +100,7 @@ echo 60 > /proc/sys/vm/dirty_ratio
 #echo ondemand > /sys/devices/fdb00000.qcom,kgsl-3d0/kgsl/kgsl-3d0/pwrscale/trustzone/governor
 
 # set default readahead
-echo 2048 > /sys/block/mmcblk0/bdi/read_ahead_kb
+echo 4096 > /sys/block/mmcblk0/bdi/read_ahead_kb
 
 # make sure our max gpu clock is set via sysfs
 #echo 450000000 > /sys/class/kgsl/kgsl-3d0/max_gpuclk
