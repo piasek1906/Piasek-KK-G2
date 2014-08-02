@@ -2,10 +2,6 @@
 
 # Kernel Tuning by Piasek1906.
 
-# hotplug
-stop mpdecision
-start intelli_plug
-
 # enable force fast charge on USB to charge faster
 echo "1" > /sys/kernel/fast_charge/force_fast_charge;
 chmod 444 /sys/kernel/fast_charge/force_fast_charge;
@@ -60,17 +56,24 @@ echo "intelliactive" > /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
 echo "intelliactive" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
 echo "intelliactive" > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
 
-# Tweak the sampling rates and load thresholds for Ondemand
-echo 10000 > /sys/devices/system/cpu/cpufreq/ondemand/sampling_rate
-echo 50 > /sys/devices/system/cpu/cpufreq/ondemand/up_threshold
-echo 50 > /sys/devices/system/cpu/cpufreq/ondemand/up_threshold_any_cpu_load
-echo 50 > /sys/devices/system/cpu/cpufreq/ondemand/up_threshold_multi_core
-echo 10 > /sys/devices/system/cpu/cpufreq/ondemand/down_differential
-echo 4 > /sys/devices/system/cpu/cpufreq/ondemand/sampling_down_factor
+# intelliactive Governor Settings
+echo 30000 > /sys/devices/system/cpu/cpufreq/intelliactive/above_hispeed_delay
+echo 1 > /sys/devices/system/cpu/cpufreq/intelliactive/boostpulse
+echo 80000 > /sys/devices/system/cpu/cpufreq/intelliactive/boostpulse_duration
+echo 90 > /sys/devices/system/cpu/cpufreq/intelliactive/go_hispeed_load
+echo 1267200 > /sys/devices/system/cpu/cpufreq/intelliactive/hispeed_freq
+echo 1 > /sys/devices/system/cpu/cpufreq/intelliactive/io_is_busy
+echo 40000 > /sys/devices/system/cpu/cpufreq/intelliactive/min_sample_time
+echo 60000 > /sys/devices/system/cpu/cpufreq/intelliactive/sampling_down_factor
+echo 960000 > /sys/devices/system/cpu/cpufreq/intelliactive/sync_freq
+echo 90 > /sys/devices/system/cpu/cpufreq/intelliactive/target_loads
+echo 10000 > /sys/devices/system/cpu/cpufreq/intelliactive/timer_rate
+echo 30000 > /sys/devices/system/cpu/cpufreq/intelliactive/timer_slack
+echo 960000 > /sys/devices/system/cpu/cpufreq/intelliactive/up_threshold_any_cpu_freq
+echo 65 > /sys/devices/system/cpu/cpufreq/intelliactive/up_threshold_any_cpu_load
 
-# tweak some other settings for Ondemand
-echo 0 > /sys/devices/system/cpu/cpufreq/ondemand/io_is_busy
-echo 0 > /sys/devices/system/cpu/cpufreq/ondemand/powersave_bias
+# TCP Congestion
+echo "westwood" > /proc/sys/net/ipv4/tcp_congestion_control
 
 # set sync frequencies
 #echo 960000 > /sys/devices/system/cpu/cpufreq/ondemand/optimal_freq
@@ -82,6 +85,12 @@ echo 96000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
 echo 96000 > /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq
 echo 96000 > /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq
 echo 96000 > /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq
+
+# CPU Max Frequency
+echo "2265600" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+echo "2265600" > /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq
+echo "2265600" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq
+echo "2265600" > /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
 
 # set grid steps for Ondemand
 echo 7 > /sys/devices/system/cpu/cpufreq/ondemand/middle_grid_step
@@ -100,7 +109,13 @@ echo 60 > /proc/sys/vm/dirty_ratio
 #echo ondemand > /sys/devices/fdb00000.qcom,kgsl-3d0/kgsl/kgsl-3d0/pwrscale/trustzone/governor
 
 # set default readahead
-echo 4096 > /sys/block/mmcblk0/bdi/read_ahead_kb
+echo 2048 > /sys/block/mmcblk0/bdi/read_ahead_kb
+
+# GPU Max Frequency
+echo "450000000" > /sys/devices/fdb00000.qcom,kgsl-3d0/kgsl/kgsl-3d0/max_gpuclk
+
+# GPU Governor
+echo "msm-adreno-tz" > /sys/devices/fdb00000.qcom,kgsl-3d0/devfreq/fdb00000.qcom,kgsl-3d0/governor
 
 # make sure our max gpu clock is set via sysfs
 #echo 450000000 > /sys/class/kgsl/kgsl-3d0/max_gpuclk
