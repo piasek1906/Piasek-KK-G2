@@ -572,7 +572,7 @@ KBUILD_CFLAGS	+= -Os
 else
 KBUILD_CFLAGS	+= -Ofast
 KBUILD_CFLAGS   += $(call cc-disable-warning,maybe-uninitialized)
-+KBUILD_CFLAGS  += $(call cc-disable-warning,array-bounds)
+KBUILD_CFLAGS   += $(call cc-disable-warning,array-bounds)
 endif
 
 include $(srctree)/arch/$(SRCARCH)/Makefile
