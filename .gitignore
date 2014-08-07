@@ -128,6 +128,7 @@ arch/arm/boot/msm8974-v2-g2-open_com.dtb
 arch/arm/boot/zImage
 arch/arm/boot/zImage-dtb
 ozip/boot.img
+arch/arm/boot/Image
 
 \#*#
 
